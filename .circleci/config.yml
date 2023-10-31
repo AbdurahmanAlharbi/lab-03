@@ -1,0 +1,27 @@
+version: 2.1
+orbs:
+  codecov: codecov/codecov@3
+
+jobs:
+  build:
+    docker:
+      - image: cimg/openjdk:18.0
+    steps:
+      # Checkout the code as the first step.
+      - checkout
+      - run:
+          name: Install dependencies
+          command: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+      # Then run your tests and collect coverage!
+      - run:
+          name: Run tests and collect coverage
+          command: mvn -B test
+      # Upload coverage to codecov.
+      # CodeCov token must be stored as an environment variable in CircleCI dashboard.
+      - codecov/upload
+
+workflow:
+  version: 2.1
+  build-test:
+    jobs:
+      - build
